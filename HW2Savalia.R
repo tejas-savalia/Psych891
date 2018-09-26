@@ -3,7 +3,7 @@ theta = 10
 N = 1000
 gammaSim <- function(N, kappa, theta){
   x <- rgamma(N, shape = kappa, scale = theta)
-  hist(x, freq = FALSE, breaks = 30)
+  hist(x, freq = FALSE, breaks = 30, col = "grey")
   
   #Plotting lines
   xfit = seq(min(gam), max(gam), length = 2000)
@@ -11,11 +11,30 @@ gammaSim <- function(N, kappa, theta){
   
   lines(xfit, yfit)
   
+  q=quantile(x,c(.1,.3,.5,.7,.9))
+  abline(v=q)
   
-  return (x)
+  return (q)
 }
+#par(mfrow=(1, 1))
+q = gammaSim(N, kappa, theta)
+gammaPred <- function(par, q){
 
-gam = gammaSim(N, kappa, theta)
+  #Parameters
+  kappa = par[1]
+  theta = par[2]
+  
+  #Cuts for quantiles
+  cuts = c(0, q, Inf)
+  p = c()
+  
+  for (i in (1:length(cuts)-1)){
+    p[i] = pgamma(i+1, kappa, scale = theta) - pgamma(i, kappa, scale = theta)
+  }
+  return(p)
+}
+gammaPred(c(kappa, theta), q)
+
 xfit = seq(min(gam), max(gam), length = 2000)
 yfit = dgamma(xfit, shape = kappa, scale = theta)
 
