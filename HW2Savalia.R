@@ -1,6 +1,8 @@
-kappa = 10
-theta = 10
+kappa = 1
+theta = 5
 N = 1000
+
+#Question 1
 gammaSim <- function(N, kappa, theta){
   x <- rgamma(N, shape = kappa, scale = theta)
   hist(x, freq = FALSE, breaks = 30, col = "grey")
@@ -18,6 +20,9 @@ gammaSim <- function(N, kappa, theta){
 }
 #par(mfrow=(1, 1))
 q = gammaSim(N, kappa, theta)
+q
+
+#Question 2
 gammaPred <- function(par, q){
 
   #Parameters
@@ -29,107 +34,111 @@ gammaPred <- function(par, q){
   p = c()
   
   for (i in (1:length(cuts)-1)){
-    p[i] = pgamma(i+1, kappa, scale = theta) - pgamma(i, kappa, scale = theta)
+    p[i] = pgamma(cuts[i+1], kappa, scale = theta) - pgamma(cuts[i], kappa, scale = theta)
   }
   return(p)
 }
 gammaPred(c(kappa, theta), q)
 
-xfit = seq(min(gam), max(gam), length = 2000)
-yfit = dgamma(xfit, shape = kappa, scale = theta)
+#Question 3
+N = 500
+kappa = 4
+theta = 3
+q = gammaSim(N, kappa, theta)
+freq = c()
 
-lines(xfit, yfit)
-library(e1071)
+freq = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
 
-#Q: 3
-mean = c()
-median = c()
-iqr = c()
-range = c()
-skew = c()
-
-N = 10000
-kappa = 1
-for (i in c(1:10)){
-  gam <- gammaSim(N, kappa, i)
-  summary <- summary(gam)
-  mean <- c(mean, summary[4])
-  median <- c(median, summary[3])
-  iqr <- c(iqr, summary[5] - summary[2])
-  range <- c(range, summary[6] - summary[1])
-  skew <- c(skew, skewness(gam))
+#Question 4
+par = c(kappa, theta)
+gsqfun <- function(par, q, freq){
+  p = gammaPred(par, q)
+  p = p/sum(p)
+  #print (p)
+  
+  pf = p*sum(freq)
+  pf
+  
+  gslev=1:length(freq)
+  gslev=gslev[freq>0]
+  
+  gsq=2*sum(freq[gslev]*log(freq[gslev]/pf[gslev]))
+  return (gsq)
 }
 
-mean
-median
-iqr
-range
-skew
-
-#The mean and the median of the distribution increases as the scale parameter increases. 
-#The spread, denoted by IQR and Range also increases
-#The skewness of the distribution remains almost constant.
-
-
-#Q 4)
-
-mean = c()
-median = c()
-iqr = c()
-range = c()
-skew = c()
-
-N = 10000
-kappa = 1
+#Question 5 and 6
+pars = data.frame(c(0, 0))
 
 for (i in c(1:10)){
-  gam <- gammaSim(10000, 1, i)
-  summary <- summary(gam)
-  mean <- c(mean, summary[4])
-  median <- c(median, summary[3])
-  iqr <- c(iqr, summary[5] - summary[2])
-  range <- c(range, summary[6] - summary[1])
-  skew <- c(skew, skewness(gam))
+  par = c(2, 3)
+  q = gammaSim(N, kappa, theta)
+  comp = gsqfun(par, q, freq)
+  
+  while(TRUE){
+    fit=optim(par,gsqfun,freq=freq,q=q)
+    par=fit$par
+    if((comp-fit$value)<=.001) break
+    comp=fit$value
+  }
+  pars[i] = par  
 }
 
-mean
-median
-iqr
-range
-skew
-
-#The effect on the distribution is similar to the previous one.
-
-#Q 5)
-
-mean = c()
-median = c()
-iqr = c()
-range = c()
-skew = c()
+library(matrixStats)
+#First row of the dataframe is kappas
+kappa_mean = apply(pars, 1, mean)[1]
+kappa_sd = apply(pars, 1, sd)[1] 
 
 
-N = 10000
-theta = 5
-kappa_mul = c(1, 2, 3, 4, 5, 10, 20)
+#Second row is theta
+theta_mean = apply(pars, 1, mean)[2]
+theta_sd = apply(pars, 1, sd)[2] 
 
-for (i in kappa_mul){
-  gam <- gammaSim(10000, i, 5)
-  summary <- summary(gam)
-  mean <- c(mean, summary[4])
-  median <- c(median, summary[3])
-  iqr <- c(iqr, summary[5] - summary[2])
-  range <- c(range, summary[6] - summary[1])
-  skew <- c(skew, skewness(gam))
+
+
+#Question 7
+N = 50
+pars = data.frame(c(0, 0))
+
+for (i in c(1:10)){
+  par = c(2, 3)
+  q = gammaSim(N, kappa, theta)
+  comp = gsqfun(par, q, freq)
+  
+  while(TRUE){
+    fit=optim(par,gsqfun,freq=freq,q=q)
+    par=fit$par
+    if((comp-fit$value)<=.001) break
+    comp=fit$value
+  }
+  pars[i] = par  
 }
 
-mean
-median
-iqr
-range
-skew
+#First row of the dataframe is kappas
+kappa_mean2 = apply(pars, 1, mean)[1]
+kappa_sd2 = apply(pars, 1, sd)[1] 
 
 
-#The mean and median increase proportional to the increase in the shape parameter. 
-#Same goes for IQR and range
-#The skew decreases, the distribution shifting leftwards (But not left skewed yet)
+#Second row is theta
+theta_mean2 = apply(pars, 1, mean)[2]
+theta_sd2 = apply(pars, 1, sd)[2] 
+
+
+#Reading values for 6 and 7
+kappa_mean 
+kappa_mean2
+
+kappa_sd
+kappa_sd2
+
+
+theta_mean
+theta_mean2
+
+
+theta_sd
+theta_sd2
+
+
+#The means remain around the same but the standard deviation for the runs with 10 samples is high
+#This could be because low sample size causes non-consistent fitting of the curve; similar to 
+#how probability of coin tosses starting from 1 or 0 would stabilize in the limit.

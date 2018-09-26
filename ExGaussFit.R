@@ -30,7 +30,7 @@ exgsim=function(mu,sig,tau,N){
 
 #runs the sim function above
 q=exgsim(mu,sig,tau,N)
-
+q
 #Creates a vector of observed frequency
 #  counts in each RT bin separated by
 #  quantiles from the exgsim function
@@ -94,7 +94,7 @@ pred=function(par,q){
   return(p)
 }
 
-pred(c(mu, sigma, 1/tau), q)
+#pred(c(mu, sigma, tau), q)
 #computes g-squared
 # par is a parameter vector with mu, sig,
 # and tau in that order
@@ -102,7 +102,7 @@ pred(c(mu, sigma, 1/tau), q)
 # q is a set of observed quantiles
 gsqfun=function(par,dat,q){
   p=pred(par,q) #get predicted proportions
-  
+  print(p)
   #If a cell is 0 in the predictions but not in
   # the data, fill in the prediction with a small
   # number. This is a trick to keep the function
