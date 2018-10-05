@@ -52,6 +52,5 @@ w_AIC_C = exp((-del_AIC_C/2))/denom
 
 #Q6
 
-gdiff = 12.3 - 18.1
-p = 1 - pchisq(gdiff, df=3)
-
+gdiff = 18.1-12.3
+p = pchisq(gdiff, df=3, lower.tail = F)
