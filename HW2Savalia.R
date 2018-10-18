@@ -5,16 +5,16 @@ N = 1000
 #Question 1
 gammaSim <- function(N, kappa, theta){
   x <- rgamma(N, shape = kappa, scale = theta)
-  hist(x, freq = FALSE, breaks = 30, col = "grey")
+  #hist(x, freq = FALSE, breaks = 30, col = "grey")
   
   #Plotting lines
-  xfit = seq(min(gam), max(gam), length = 2000)
-  yfit = dgamma(xfit, shape = kappa, scale = theta)
+  #xfit = seq(min(gam), max(gam), length = 2000)
+  #yfit = dgamma(xfit, shape = kappa, scale = theta)
   
-  lines(xfit, yfit)
+  #lines(xfit, yfit)
   
   q=quantile(x,c(.1,.3,.5,.7,.9))
-  abline(v=q)
+  #abline(v=q)
   
   return (q)
 }
@@ -83,15 +83,15 @@ for (i in c(1:10)){
   pars[i] = par  
 }
 
-library(matrixStats)
+#library(matrixStats)
 #First row of the dataframe is kappas
-kappa_mean = apply(pars, 1, mean)[1]
-kappa_sd = apply(pars, 1, sd)[1] 
+#kappa_mean = apply(pars, 1, mean)[1]
+#kappa_sd = apply(pars, 1, sd)[1] 
 
 
 #Second row is theta
-theta_mean = apply(pars, 1, mean)[2]
-theta_sd = apply(pars, 1, sd)[2] 
+#theta_mean = apply(pars, 1, mean)[2]
+#theta_sd = apply(pars, 1, sd)[2] 
 
 
 
@@ -114,29 +114,29 @@ for (i in c(1:10)){
 }
 
 #First row of the dataframe is kappas
-kappa_mean2 = apply(pars, 1, mean)[1]
-kappa_sd2 = apply(pars, 1, sd)[1] 
+#kappa_mean2 = apply(pars, 1, mean)[1]
+#kappa_sd2 = apply(pars, 1, sd)[1] 
 
 
 #Second row is theta
-theta_mean2 = apply(pars, 1, mean)[2]
-theta_sd2 = apply(pars, 1, sd)[2] 
+#theta_mean2 = apply(pars, 1, mean)[2]
+#theta_sd2 = apply(pars, 1, sd)[2] 
 
 
 #Reading values for 6 and 7
-kappa_mean 
-kappa_mean2
+#kappa_mean 
+#kappa_mean2
 
-kappa_sd
-kappa_sd2
-
-
-theta_mean
-theta_mean2
+#kappa_sd
+#kappa_sd2
 
 
-theta_sd
-theta_sd2
+#theta_mean
+#theta_mean2
+
+
+#theta_sd
+#theta_sd2
 
 
 #The means remain around the same but the standard deviation for the runs with 10 samples is high
