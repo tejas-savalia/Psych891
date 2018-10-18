@@ -283,7 +283,7 @@ for(si in 1:nsim){
 par(mfrow=c(2,2),mar=c(5,5,2,2))
 hist(f_exg_gsq,50,freq=F, main = "G_squared of exg fits")
  vg=seq(0,max(f_exg_gsq),length.out=1000)
- points(vg,dchisq(vg,3),type='l',lwd=2)
+ points(vg,dchisq(vg,2),type='l',lwd=2)
 hist(f_gam_gsq,50,freq=F, main = "G_squared of gamma fits")
  #vg=seq(0,max(f_gam_gsq),length.out=1000)
  #points(vg,dchisq(vg,2),type='l',lwd=2)
@@ -298,8 +298,8 @@ points(true_tau, ftau, pch = 2, col = 'red')
 
 
 #Q3
-#The first plot shows g_squared fits being similar to a chi_squared with 3 degrees of freedom; this is
-#expected because ex_gauss has 3 free parameters and is fit to it's own data.
+#The first plot shows g_squared fits being similar to a chi_squared with 2 degrees of freedom; 
+#this is expected because ex_gauss has 3 free parameters and the data has 5.
 #The g_squared in the second one is fairly high; this is also expected because gamma is not the distribution
 #that generated the data
 #The difference of fit plot shows high values too; owing to low g_squared for exgauss and high for
@@ -382,7 +382,7 @@ hist(f_exg_gsq,50,freq=F, main = "G_squared of exg fits")
 
 hist(f_gam_gsq,50,freq=F, main = "G_squared of gamma fits")
 vg=seq(0,max(f_gam_gsq),length.out=1000)
-points(vg,dchisq(vg,2),type='l',lwd=2)
+points(vg,dchisq(vg,3),type='l',lwd=2)
 
 hist(f_exg_gsq-f_gam_gsq,50,freq=F, main = "G_squared of difference of fits")
 #vg=seq(0,max(fgsq2),length.out=1000)
@@ -398,7 +398,8 @@ points(true_scale,fth, pch = 4, col = 'blue')
 #Expected because ex-gaussian has more free parameters than the data generated from gamma distribution (3 vs 2)
 
 #The gamma distribution seems to fit well to its own data too. The density aligns with the bold
-#line for a chi-squared with 2 degrees of freedom indicating gamma's 2 parameters
+#line for a chi-squared with 3 degrees of freedom indicating gamma's 2 parameters subtracted from data's
+#5 degrees of freedom
 
 #The difference of fit is fairly low, indicative of ex-gaussian fitting just as well as gamma.
 #Eye-balling it, there *does* seem to be a higher density on positive values, indicating gamma fits 
