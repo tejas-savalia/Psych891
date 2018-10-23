@@ -1,0 +1,163 @@
+setwd('C:\\Users\\cemnlcmaplab\\Documents\\Psych 891 Modelling cog dynamics\\Codes\\Midterm')
+source('wald.R')
+source('TruncNorm.R')
+
+nsim = 2000 
+N = 250 #Number of Trials
+
+
+#True parameters
+#Boundary height from a truncated normal
+a = rtnorm(nsim, mu=0.15, sig = 0.05, lo = 0.05, hi = 0.30) 
+#Drift rate from a truncated normal
+v = rtnorm(nsim, mu = 0.3, sig = 0.1, lo = 0.1, hi = 0.5)
+
+q_wald = c()
+#Expected frequencies
+f = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
+
+#Fit parameters to save
+f_a = c()
+f_v = c()
+
+f_wald_gsq = c()
+
+
+cnt = 0
+upfreq = 50
+
+
+################################################################################
+
+cons=function(cpar){
+  penf=0
+  pmn=.05
+  if(cpar[1]<pmn){
+    penf=penf+(pmn-cpar[1]) 
+    cpar[1]=pmn
+  }
+  pmn=.1
+  if(cpar[2]<pmn){
+    penf=penf+(pmn-cpar[2]) 
+    cpar[2]=pmn
+  }
+  #pmn=.01
+  #if(cpar[3]<pmn){
+  #  penf=penf+(pmn-cpar[3]) 
+  #  cpar[3]=pmn
+  #}
+  ls=list(cpar,penf)
+  return(ls)
+}
+
+
+
+waldPred <- function(par, q){
+  
+  #Parameters
+  a = par[1]
+  v = par[2]
+  
+  #Cuts for quantiles
+  cuts = c(0, q, Inf)
+  p = c()
+  
+  for (i in (1:(length(cuts)-1))){
+    p[i] = pwald(cuts[i+1], a, v) - pwald(cuts[i], a, v)
+  }
+  return(p)
+}
+
+gsqfun_wald <- function(par, q, freq){
+  
+  ls = cons(par)
+  cpar = ls[[1]]
+  pen = ls[[2]]
+  p = waldPred(cpar, q)
+  p = p/sum(p)
+  #print (p)
+  
+  pf = p*sum(freq)
+  pf
+  
+  gslev=1:length(freq)
+  gslev=gslev[freq>0]
+  
+  gsq=2*sum(freq[gslev]*log(freq[gslev]/pf[gslev]))
+  gsq = gsq + pen*gsq
+  return (gsq)
+}
+
+wald_fit = function(q, f){
+  par = c(0.15, 0.3)
+  comp = gsqfun_wald(par, q, f)
+  
+  while(TRUE){
+    fit=optim(par,gsqfun_wald,freq=f,q=q)
+    par=fit$par
+    if((comp-fit$value)<=.001) break
+    comp=fit$value
+  }
+  wald_par = par
+  gsq = gsqfun_wald(par, q, f)
+  
+  ls = list(wald_par, gsq)
+  return (ls)
+}
+
+######################################################################################################
+
+#Running them loops
+
+
+si= 1
+cnt = 0
+upfreq = 50
+for(si in 1:nsim){
+  
+  
+  #runs the sim function above
+  q_wald=waldSimq(a[si], v[si], N)
+  f_wald = f
+  
+  #Creates a vector of observed frequency
+  #  counts in each RT bin separated by
+  #  quantiles from the exgsim function
+  
+  ls=wald_fit(q_wald, f_wald)
+  #return fit parameters and gsq values. 
+  
+  fpar=ls[[1]]
+  gval=ls[[2]]
+  
+  f_a[si]=fpar[1]
+  f_v[si]=fpar[2]
+  
+  f_wald_gsq[si]=gval
+  
+  
+  
+  
+  #show progress updates
+  
+  if(cnt%%upfreq==0) print(cnt)
+  cnt=cnt+1
+}
+
+
+
+##########################################################################################
+#Plots
+par(mfrow = c(2, 2))
+hist(f_wald_gsq, 100, freq = F, main = "G_sq fits")
+vg = seq(0, max(f_wald_gsq), length.out = 2000)
+points(vg, dchisq(vg, 3), type = 'l', lwd = 2)
+
+plot(a, f_a)
+abline(a = 0, b = 1, col = 'blue', lwd = 2)
+
+plot(v, f_v)
+abline(a = 0, b = 1, col = 'blue', lwd = 2)
+
+
+
