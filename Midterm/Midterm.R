@@ -358,7 +358,28 @@ abline(a = 0, b = 1, col = 'blue', lwd = 2)
 points(v2, f_v2, pch = 3, col = 'green')
 abline(a = 0, b = 1, col = 'blue', lwd = 2)
 
+###########################################################################################
+###########################################################################################
 
+load('Exp1.RData')
+N = length(e1dat[1,]) #Number of trials
+n_participants = length(e1dat[, 1]) #Number of participants
+f = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
 
+f_wald_a_participant_1 = c()
+f_wald_v_participant_1 = c()
 
+f_wald_gsq_participant_1 = c()
 
+for (i in 1:n_participants){
+  q = quantile(e1dat[i,], c(0.1, 0.3, 0.5, 0.7, 0.9))
+  ls = wald_fit(q, f)
+  fpar = ls[[1]]
+  gval = ls[[2]]
+  
+  f_wald_a_participant_1[i] = fpar[1]
+  f_wald_v_participant_1[i] = fpar[2]
+  
+  f_wald_gsq_participant_1[i] = gval
+
+}

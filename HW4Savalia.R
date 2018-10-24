@@ -441,3 +441,56 @@ wDA = (devD/devA)*(N^((fA-fD)/2))
 #BIC Values are 570.72, 572.63, 572.72, 575.54 respectively
 #Relative BIC weights are 31.91, 0.031, 1020.33, 0.0009 respectively. 
 #(Did not compute for all possible 10 combinations)
+
+
+##########################################################################################
+
+setwd('C:\\Users\\cemnlcmaplab\\Documents\\Psych 891 Modelling cog dynamics\\Codes\\Midterm')
+
+
+load('Exp1.RData')
+N = length(e1dat[1,]) #Number of trials
+n_participants = length(e1dat[, 1]) #Number of participants
+f = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
+
+f_exg_mu_participant_1 = c()
+f_exg_sig_participant_1 = c()
+f_exg_tau_participant_1 = c()
+f_exg_gsq_participant_1 = c()
+
+for (i in 1:n_participants){
+  q = quantile(e1dat[i,], c(0.1, 0.3, 0.5, 0.7, 0.9))
+  ls = exgauss_fit(q, f)
+  fpar = ls[[1]]
+  gval = ls[[2]]
+  
+  f_exg_mu_participant_1[i] = fpar[1]
+  f_exg_sig_participant_1[i] = fpar[2]
+  f_exg_tau_participant_1[i] = fpar[3]
+  
+  f_exg_gsq_participant_1[i] = gval
+  
+}
+
+
+f_gam_kap_participant_1 = c()
+f_gam_th_participant_1 = c()
+
+f_gam_gsq_participant_1 = c()
+
+for (i in 1:n_participants){
+  q = quantile(e1dat[i,], c(0.1, 0.3, 0.5, 0.7, 0.9))
+  ls = gamma_fit(q, f)
+  fpar = ls[[1]]
+  gval = ls[[2]]
+  
+  f_gam_kap_participant_1[i] = fpar[1]
+  f_gam_th_participant_1[i] = fpar[2]
+  
+  f_gam_gsq_participant_1[i] = gval
+  
+}
+
+
+
+
