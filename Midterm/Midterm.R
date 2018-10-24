@@ -352,8 +352,13 @@ points(vg, dchisq(vg, 7), type = 'l', lwd = 2)
 plot(a, f_a)
 abline(a = 0, b = 1, col = 'blue', lwd = 2)
 
-plot(v1, f_v1)
+plot(v1, f_v1, pch = 1, col = 'red')
 abline(a = 0, b = 1, col = 'blue', lwd = 2)
 
-plot(v2, f_v2)
+points(v2, f_v2, pch = 3, col = 'green')
 abline(a = 0, b = 1, col = 'blue', lwd = 2)
+
+
+
+
+
