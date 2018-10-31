@@ -260,7 +260,9 @@ gsqfun_wald <- function(par, q1, freq1, q2, freq2){
   gsq1=2*sum(freq1[gslev]*log(freq1[gslev]/pf[gslev]))
   gsq1 = gsq1 + pen*gsq1
   
-  ls = cons(c(par[1], par[3]))
+  #ls = cons(c(par[1], par[3]))
+  #For fixed condition uncomment below. For v-free parameter, uncomment above
+  ls = cons(par[1:2])
   cpar = ls[[1]]
   pen = ls[[2]]
   p = waldPred(cpar, q2)
@@ -383,3 +385,81 @@ for (i in 1:n_participants){
   f_wald_gsq_participant_1[i] = gval
 
 }
+
+
+load('Exp2.RData')
+N = length(e2dat[,,1 ])/4 #Number of trials
+
+f1 = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
+f2 = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
+
+f_wald_a_participant_21 = c()
+f_wald_v1_participant_21 = c()
+f_wald_v2_participant_21 = c()
+
+f_wald_gsq_participant_21 = c()
+
+
+n_participants = length(e2dat[1, 1, ])
+#Number of participants. Ignoring the conditions for now
+
+#f = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
+
+#f_wald_a_participant_21 = c()
+#f_wald_v_participant_21 = c()
+
+#f_wald_gsq_participant_21 = c()
+i = 1
+for (i in 1:n_participants){
+  
+  q1 = quantile(e2dat[,,i][e2dat[,,i][,1] == 1, 2], c(0.1, 0.3, 0.5, 0.7, 0.9))
+  #Quantiles for condition 2
+  q2 = quantile(e2dat[,,i][e2dat[,,i][,1] == 2, 2], c(0.1, 0.3, 0.5, 0.7, 0.9))
+  
+  #q = quantile(e2dat[,,i][,2], c(0.1, 0.3, 0.5, 0.7, 0.9))
+  ls = wald_fit(q1, f1, q2, f2)
+  fpar = ls[[1]]
+  gval = ls[[2]]
+  
+  f_wald_a_participant_21[i] = fpar[1]
+  f_wald_v_participant_21[i] = fpar[2]
+  
+  f_wald_gsq_participant_21[i] = gval
+  
+}
+
+########################################################################################
+
+load('Exp2.RData')
+N = length(e2dat[,,1])/4 #Number of trials; divided by num conditions(2) and number of columns (2)
+n_participants = length(e2dat[1, 1, ])
+#Number of participants. Dividing by two for 2 conditions
+
+f1 = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
+f2 = c(0.1, 0.2, 0.2, 0.2, 0.2, 0.1)*N
+
+f_wald_a_participant_22 = c()
+f_wald_v1_participant_22 = c()
+f_wald_v2_participant_22 = c()
+
+f_wald_gsq_participant_22 = c()
+i = 1
+for (i in 1:n_participants){
+  #Quantiles for condition 1
+  q1 = quantile(e2dat[,,i][e2dat[,,i][,1] == 1, 2], c(0.1, 0.3, 0.5, 0.7, 0.9))
+  #Quantiles for condition 2
+  q2 = quantile(e2dat[,,i][e2dat[,,i][,1] == 2, 2], c(0.1, 0.3, 0.5, 0.7, 0.9))
+  ls = wald_fit(q1, f1, q2, f2)
+  #ls = wald_fit(q, f)
+  fpar = ls[[1]]
+  gval = ls[[2]]
+  
+  f_wald_a_participant_22[i] = fpar[1]
+  f_wald_v1_participant_22[i] = fpar[2]
+  f_wald_v2_participant_22[i] = fpar[3]
+  
+  f_wald_gsq_participant_22[i] = gval
+  
+}
+
+
