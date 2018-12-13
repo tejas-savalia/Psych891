@@ -34,7 +34,7 @@ rm(list = ls())
 #from the next stimulus after they've started getting predictive. This corresponds to the
 #boundary separation parameter. 
 
-data = read.csv(file = file.choose())
+data = read.csv(file = "Predicted_start_points.csv")
 head(data)
 
 #total_rts = data[1] + data[2]
@@ -166,7 +166,7 @@ wald_fit = function(a, q, f){
 #    if((comp-fit$value)<=.001) break
 #    comp=fit$value
 #  }
-  par = linear_search(c(0.01, 1), a, q, f)
+  par = linear_search(c(0.01, 5), a, q, f)
   wald_par = par
   gsq = gsqfun_wald(a, wald_par, q, f)
   
@@ -211,5 +211,5 @@ for(si in 1:n_trials){
   if(cnt%%upfreq==0) print(cnt)
   cnt=cnt+1
 }
-
-
+f_wald_gsq
+f_v
